@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graduation Radar: which pre-token protocols launch next</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board">Skip to the board</a>
+<header class="top">
+  <div>
+    <h1>Graduation Radar</h1>
+    <p class="sub">Pre-token protocols ranked by expected launch value: graduation probability &times; peer-implied token value.</p>
+  </div>
+  <div class="meta" id="meta"></div>
+</header>
+<nav class="bands" id="bands" aria-label="Graduation bands"></nav>
+<section class="controls" aria-label="Filters">
+  <label>Search <input id="q" type="search" placeholder="protocol or slug" autocomplete="off"></label>
+  <label>Category <select id="cat"><option value="">All categories</option></select></label>
+  <label>Band <select id="band"><option value="">All bands</option><option value="soon">Within a year</option><option value="year">One to two years</option><option value="watch">Two years out</option><option value="longshot">Long shot</option></select></label>
+  <label>Chain <select id="chain"><option value="">All chains</option></select></label>
+  <label>Min. probability <select id="minp"><option value="0">Any</option><option value="0.3">30%+</option><option value="0.5">50%+</option><option value="0.7">70%+</option></select></label>
+  <label>Sort <select id="sort"><option value="value">Expected value</option><option value="prob">Graduation probability</option><option value="fdv">Implied token value</option><option value="tvl">TVL</option><option value="growth">7-day growth</option><option value="age">Age with no token</option><option value="months">Soonest graduation</option></select></label>
+  <span class="count" id="count"></span>
+</section>
+<main id="board" tabindex="-1">
+  <section id="detail" class="detail" hidden></section>
+  <table class="board">
+    <thead><tr>
+      <th data-k="rank">#</th><th data-k="name">Protocol</th><th data-k="category">Category</th><th>Chains</th>
+      <th data-k="tvl" class="num">TVL</th><th data-k="growth" class="num">7d</th><th data-k="age" class="num">Age</th>
+      <th data-k="prob" class="num">Graduation</th><th data-k="months" class="num">Months</th>
+      <th data-k="fdv" class="num">Implied token value</th><th data-k="value" class="num">Expected value</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p class="empty" id="empty" hidden>No protocol matches these filters.</p>
+</main>
+<section class="panels">
+  <div class="panel">
+    <h2>How the model works</h2>
+    <p>Every figure comes from the sealed snapshot alone. No protocol name is special-cased.</p>
+    <ul class="formula">
+      <li><b>Peer-implied token value</b> = TVL &times; peer multiple. The peer multiple is the median market-cap-per-TVL of tokenized protocols in the same category, shrunk toward the global median when the category has few tokenized peers; each peer's multiple is capped at 5x first, so a tiny-TVL protocol's extreme ratio cannot carry a whole category.</li>
+      <li><b>Graduation probability</b> = logistic(size, growth, age, reach, category prior). Size is log TVL, growth is the 7-day TVL change, age is days listed with no token recorded, reach is the number of chains, and the prior is how often this category's protocols record a token in this snapshot.</li>
+      <li><b>Expected value</b> = probability &times; peer-implied token value. That is the board's rank.</li>
+      <li><b>Months to token</b> = 3 + 33 &times; (1 &minus; probability): a read-out of the probability, not a separate forecast.</li>
+    </ul>
+    <p class="note">A protocol is called pre-token when its record carries no token: no market cap, no CoinGecko id, no symbol. That is what the record says, never proof it has no token. Protocols that structurally never launch their own token &mdash; exchanges, bridges, staking wrappers, versioned pools &mdash; are screened out of the ranking, except that every watchlist protocol is always ranked.</p>
+  </div>
+  <div class="panel">
+    <h2>Market comparables</h2>
+    <p>Tokenized protocols, largest by market cap. Their market-cap-per-TVL is where every peer multiple comes from.</p>
+    <table class="live">
+      <thead><tr><th>Protocol</th><th>Category</th><th class="num">TVL</th><th class="num">Market cap</th><th class="num">mcap / TVL</th></tr></thead>
+      <tbody id="live"></tbody>
+    </table>
+  </div>
+</section>
+<footer class="foot">
+  <p>Graduation Radar &middot; model graduation-1 &middot; snapshot as of <span id="asof"></span> &middot; values are the entry's own claim, not a promise that any token launches.</p>
+</footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
